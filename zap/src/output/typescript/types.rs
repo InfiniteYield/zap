@@ -29,7 +29,7 @@ impl<'src> Output<'src> for TypesOutput<'src> {
 }
 
 impl<'src> ConfigProvider<'src> for TypesOutput<'src> {
-	fn get_config(&self) -> &'src Config<'src> {
+	fn get_config(&self) -> &Config<'src> {
 		self.config
 	}
 }

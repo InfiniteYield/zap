@@ -3,13 +3,13 @@ use crate::config::{Config, Enum, EvCall, EvDecl, EvSource, NamespaceEntry, Ty, 
 use super::ConfigProvider;
 use super::Output;
 
-struct ServerOutput<'src> {
-	config: &'src Config<'src>,
+struct ServerOutput<'a, 'src> {
+	config: &'a Config<'src>,
 	tabs: u32,
 	buf: String,
 }
 
-impl<'src> Output<'src> for ServerOutput<'src> {
+impl<'a, 'src> Output<'src> for ServerOutput<'a, 'src> {
 	fn push(&mut self, s: &str) {
 		self.buf.push_str(s);
 	}
@@ -29,14 +29,14 @@ impl<'src> Output<'src> for ServerOutput<'src> {
 	}
 }
 
-impl<'src> ConfigProvider<'src> for ServerOutput<'src> {
-	fn get_config(&self) -> &'src Config<'src> {
+impl<'a, 'src> ConfigProvider<'src> for ServerOutput<'a, 'src> {
+	fn get_config(&self) -> &Config<'src> {
 		self.config
 	}
 }
 
-impl<'src> ServerOutput<'src> {
-	pub fn new(config: &'src Config<'src>) -> Self {
+impl<'a, 'src> ServerOutput<'a, 'src> {
+	pub fn new(config: &'a Config<'src>) -> Self {
 		Self {
 			config,
 			tabs: 0,
@@ -348,7 +348,7 @@ impl<'src> ServerOutput<'src> {
 	}
 }
 
-pub fn code<'src>(config: &'src Config<'src>) -> Option<String> {
+pub fn code<'a, 'src>(config: &'a Config<'src>) -> Option<String> {
 	if !config.typescript {
 		return None;
 	}

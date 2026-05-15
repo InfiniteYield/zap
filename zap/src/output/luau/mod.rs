@@ -6,6 +6,7 @@ use crate::{
 
 pub mod client;
 pub mod server;
+pub mod split;
 pub mod types;
 
 const INITIAL_POLLING_EVENT_CAPACITY: usize = 100;
@@ -210,7 +211,7 @@ pub trait Output<'src>: ConfigProvider<'src> {
 		self.push(")");
 	}
 
-	fn push_file_header(&mut self, scope: &str) {
+	fn push_file_header(&mut self, scope: &str, task_wait: bool) {
 		self.push_line("--!native");
 		self.push_line("--!optimize 2");
 		self.push_line("--!nocheck");
@@ -222,12 +223,16 @@ pub trait Output<'src>: ConfigProvider<'src> {
 			env!("CARGO_PKG_VERSION")
 		));
 
+		if task_wait {
+			self.push_line("task.wait()");
+		}
+
 		self.push_line("local RunService = game:GetService(\"RunService\")");
 		self.push_line("local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")");
 	}
 
 	fn push_remote_scope_validation(&mut self) {
-		let scope = self.get_config().remote_scope;
+		let scope = &self.get_config().remote_scope.clone();
 		let folder = self.get_config().remote_folder;
 
 		self.push("\n");

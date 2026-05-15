@@ -40,8 +40,10 @@ pub struct Config<'src> {
 	pub manual_event_loop: bool,
 	pub include_profile_labels: bool,
 
-	pub remote_scope: &'src str,
+	pub remote_scope: String,
 	pub remote_folder: &'src str,
+
+	pub max_events_per_file: Option<usize>,
 
 	pub server_output: &'src str,
 	pub client_output: &'src str,

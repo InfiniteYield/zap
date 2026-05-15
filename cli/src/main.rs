@@ -35,6 +35,27 @@ fn main() -> Result<()> {
 	let diagnostics = ret.diagnostics;
 
 	if let Some(code) = code {
+		for shard in &code.server_shards {
+			let path = config_path.parent().unwrap().join(&shard.path);
+			if let Some(parent) = path.parent() {
+				std::fs::create_dir_all(parent)?;
+			}
+			std::fs::write(&path, &shard.code)?;
+			if let Some(defs) = &shard.defs {
+				std::fs::write(path.with_extension("d.ts"), defs)?;
+			}
+		}
+		for shard in &code.client_shards {
+			let path = config_path.parent().unwrap().join(&shard.path);
+			if let Some(parent) = path.parent() {
+				std::fs::create_dir_all(parent)?;
+			}
+			std::fs::write(&path, &shard.code)?;
+			if let Some(defs) = &shard.defs {
+				std::fs::write(path.with_extension("d.ts"), defs)?;
+			}
+		}
+
 		let server_path = config_path.parent().unwrap().join(code.server.path);
 		let client_path = config_path.parent().unwrap().join(code.client.path);
 

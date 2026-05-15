@@ -14,14 +14,15 @@ use crate::{
 
 use super::Output;
 
-struct ServerOutput<'src> {
-	config: &'src Config<'src>,
+struct ServerOutput<'a, 'src> {
+	config: &'a Config<'src>,
 	tabs: u32,
 	buf: String,
 	var_occurrences: HashMap<String, usize>,
+	task_wait: bool,
 }
 
-impl<'src> Output<'src> for ServerOutput<'src> {
+impl<'a, 'src> Output<'src> for ServerOutput<'a, 'src> {
 	fn push(&mut self, s: &str) {
 		self.buf.push_str(s);
 	}
@@ -41,19 +42,20 @@ impl<'src> Output<'src> for ServerOutput<'src> {
 	}
 }
 
-impl<'src> ConfigProvider<'src> for ServerOutput<'src> {
-	fn get_config(&self) -> &'src Config<'src> {
+impl<'a, 'src> ConfigProvider<'src> for ServerOutput<'a, 'src> {
+	fn get_config(&self) -> &Config<'src> {
 		self.config
 	}
 }
 
-impl<'src> ServerOutput<'src> {
-	pub fn new(config: &'src Config<'src>) -> Self {
+impl<'a, 'src> ServerOutput<'a, 'src> {
+	pub fn new(config: &'a Config<'src>, task_wait: bool) -> Self {
 		Self {
 			config,
 			tabs: 0,
 			buf: String::new(),
 			var_occurrences: HashMap::new(),
+			task_wait,
 		}
 	}
 
@@ -1612,7 +1614,8 @@ impl<'src> ServerOutput<'src> {
 	}
 
 	pub fn output(mut self) -> String {
-		self.push_file_header("Server");
+		let task_wait = self.task_wait;
+		self.push_file_header("Server", task_wait);
 
 		self.push_check_client();
 
@@ -1649,6 +1652,6 @@ impl<'src> ServerOutput<'src> {
 	}
 }
 
-pub fn code<'src>(config: &'src Config<'src>) -> String {
-	ServerOutput::new(config).output()
+pub fn code<'a, 'src>(config: &'a Config<'src>, task_wait: bool) -> String {
+	ServerOutput::new(config, task_wait).output()
 }

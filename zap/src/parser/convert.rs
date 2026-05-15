@@ -215,6 +215,13 @@ impl<'src> Converter<'src> {
 		let (remote_scope, ..) = self.str_opt("remote_scope", "ZAP", &config.opts);
 		let (remote_folder, ..) = self.str_opt("remote_folder", "ZAP", &config.opts);
 
+		let (max_events_per_file_raw, ..) = self.num_opt("max_events_per_file", 0.0, &config.opts);
+		let max_events_per_file = if max_events_per_file_raw > 0.0 {
+			Some(max_events_per_file_raw as usize)
+		} else {
+			None
+		};
+
 		let (server_output, ..) = self.str_opt("server_output", "network/server.lua", &config.opts);
 		let (client_output, ..) = self.str_opt("client_output", "network/client.lua", &config.opts);
 		let types_output = self.types_output_opt(&config.opts);
@@ -241,8 +248,9 @@ impl<'src> Converter<'src> {
 			manual_event_loop,
 			include_profile_labels,
 
-			remote_scope,
+			remote_scope: remote_scope.to_string(),
 			remote_folder,
+			max_events_per_file,
 
 			server_output,
 			client_output,

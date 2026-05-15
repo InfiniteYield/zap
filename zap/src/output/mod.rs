@@ -5,7 +5,7 @@ pub mod tooling;
 pub mod typescript;
 
 pub trait ConfigProvider<'src> {
-	fn get_config(&self) -> &'src Config<'src>;
+	fn get_config(&self) -> &Config<'src>;
 }
 
 pub fn get_unnamed_values(prefix: &str, count: usize) -> Vec<String> {
