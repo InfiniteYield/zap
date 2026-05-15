@@ -1,3 +1,5 @@
+from fork dev: This version includes `opt max_events_per_file = n` which will shard the zap files based on event count to avoid execution time exhaustion
+
 <div align="center">
 	<h1>Zap</h1>
 </div>
